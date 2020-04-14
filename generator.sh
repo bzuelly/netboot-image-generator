@@ -71,6 +71,7 @@ else
   if [[ ! -f $SCRIPT_PATH/images/$DOWNLOAD_ISO ]]; then
     # If file not exist
     ####download_image
+    echo -e "no ISO file..."
   else
     echo -e "${GREEN}File already downloaded${CLS}"
   fi
