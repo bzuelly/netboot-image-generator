@@ -1,18 +1,22 @@
 #!/bin/bash
 # Author: Yevgeniy Goncharov aka xck, http://sys-adm.in
-# Script for generate kickstart CentOS image
+#Modded by: Bryan
+# Script for generate kickstart Oracle Linux image
 #
 PATH=$PATH:/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin
 SCRIPT_PATH=$(cd `dirname "${BASH_SOURCE[0]}"` && pwd)
 ME=`basename "$0"`
 
-# Variables for ISO download 
+# Variables for ISO
 # -------------------------------------------------------------------------------------------\
-CENTOS_RELEASE="7"
-MIRROR=" http://mirror.yandex.ru/centos/$CENTOS_RELEASE/isos/x86_64/"
+###CENTOS_RELEASE="7"
+###MIRROR=" http://mirror.yandex.ru/centos/$CENTOS_RELEASE/isos/x86_64/"
 MOUNT_ISO_FOLDER="/mnt/iso"
-EXTRACT_ISO_FOLDER="/tmp/centos_custom"
-NEW_IMAGE_NAME="centos-7-custom-minimal"
+EXTRACT_ISO_FOLDER="/tmp/oracle7_custom"
+NEW_IMAGE_NAME="oracle-7-custom"
+DOWNLOAD_ISO="V983339-01.iso"
+
+
 
 # Colors
 RED="\033[0;31m"
@@ -43,51 +47,30 @@ elif [[ -e /etc/fedora-release ]]; then
 	OS="fedora"
 	ISOPACKAGE="mkisofs"
 	echo "This distro is $OS"
-elif [[ -e /etc/centos-release || -e /etc/redhat-release || -e /etc/system-release ]]; then
+elif [[ -e /etc/centos-release || -e /etc/redhat-release || -e /etc/system-release || -e /etc/oracle-release ]]; then
 	OS="centos"
 	ISOPACKAGE="mkisofs"
 	echo "This distro is $OS"
 else
-	echo "This OS no supported by this script. Sorry. Supported distro: Debian, CentOS, Fedora"
+	echo "This OS no supported by this script. Sorry. Supported distro: Debian, CentOS, Fedora, or Oracle"
 	exit 4
 fi
 
-# Functions
-# -------------------------------------------------------------------------------------------\
-# Copy ISO
-copy-iso(){
-  echo "Copy ISO to $1"
-  cp $SCRIPT_PATH/images/$NEW_IMAGE_NAME.iso $1
-}
 
-# Move ISO
-move-iso(){
-  echo "Move ISO to $1"
-  mv $SCRIPT_PATH/images/$NEW_IMAGE_NAME.iso $1
-}
-
-# Function download with Wget
-download_image()
-{
-  echo -e "${GREEN}Download image - $DOWNLOAD_ISO${CLS}"
-  wget $MIRROR$DOWNLOAD_ISO -P $SCRIPT_PATH/images
-}
 
 # Let's Begin
 # -------------------------------------------------------------------------------------------\
-# Get Minimal iso name
-echo -e "${GREEN}Get ISO image from mirror - $MIRROR${CLS}"
-DOWNLOAD_ISO=`curl -s $MIRROR | grep -i "minimal.*.iso" | grep -Po '(?<=href=")[^"]*(?=")'`
+
 
 # Check folder and downloaded ISO exist
 # -------------------------------------------------------------------------------------------\
 if [[ ! -d $SCRIPT_PATH/images ]]; then
   mkdir $SCRIPT_PATH/images
-  download_image
+  ####download_image
 else
   if [[ ! -f $SCRIPT_PATH/images/$DOWNLOAD_ISO ]]; then
     # If file not exist
-    download_image
+    ####download_image
   else
     echo -e "${GREEN}File already downloaded${CLS}"
   fi
@@ -108,9 +91,6 @@ fi
 mount $SCRIPT_PATH/images/$DOWNLOAD_ISO $MOUNT_ISO_FOLDER
 cp -rp $MOUNT_ISO_FOLDER/* $EXTRACT_ISO_FOLDER
 
-# Copy config to extract iso folder
-cp $SCRIPT_PATH/configs/ks.cfg $EXTRACT_ISO_FOLDER
-
 # Boot menu changes
 # -------------------------------------------------------------------------------------------\
 # Change default menu to Auto menu
@@ -121,7 +101,7 @@ label auto \
   menu label ^Auto install CentOS Linux 7 \
   kernel vmlinuz \
   menu default \
-  append initrd=initrd.img inst.ks=cdrom:/dev/cdrom:/ks.cfg \
+  append initrd=initrd.img inst.ks=http://192.168.200.15/agit-rhel.txt \
   # end' $EXTRACT_ISO_FOLDER/isolinux/isolinux.cfg
 
 # Make new image
