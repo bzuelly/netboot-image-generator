@@ -106,7 +106,17 @@ if [[ $OS = "centos" ]]; then
 fi
 
 
-mkisofs -o $SCRIPT_PATH/images/$NEW_IMAGE_NAME.iso -b isolinux/isolinux.bin -c isolinux/boot.cat -no-emul-boot -V '$NEW_IMAGE_NAME' -boot-load-size 4 -boot-info-table -R -J -v -T $EXTRACT_ISO_FOLDER
+mkisofs -o $SCRIPT_PATH/images/$NEW_IMAGE_NAME.iso \
+        -b isolinux/isolinux.bin \
+	-c isolinux/boot.cat \
+	-boot-load-size 4 \
+	-boot-info-table \
+	-no-emul-boot \
+	-R \
+	-J \
+	-v \
+	-V '$NEW_IMAGE_NAME' \
+	-T $EXTRACT_ISO_FOLDER
 
 #genisoimage -o $SCRIPT_PATH/images/$NEW_IMAGE_NAME.iso -b isolinux/isolinux.bin -c isolinux/boot.cat -no-emul-boot -V '$NEW_IMAGE_NAME' -boot-load-size 4 -boot-info-table -R -J -v -T $EXTRACT_ISO_FOLDER
 
