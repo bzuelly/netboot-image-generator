@@ -70,3 +70,4 @@ umount $MOUNT_ISO_FOLDER
 echo "cleanup..."
 echo -e "${GREEN}Delete $EXTRACT_ISO_FOLDER${CLS}"
 rm -rf $EXTRACT_ISO_FOLDER
+rm /tmp/$DOWNLOAD_ISO
